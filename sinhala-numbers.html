@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Practice 43 Sinhala numbers with gradual flash-card reveals, in order or at random.">
+  <title>Sinhala Numbers · Flash Cards</title>
+  <style>
+    :root { font-family: "Segoe UI", Arial, sans-serif; color: #203b36; background: #f4f5ef; color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 44px 20px 28px; min-height: 100vh; }
+    main { max-width: 620px; margin: auto; }
+    .eyebrow { margin: 0 0 10px; color: #627c66; font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(30px, 7vw, 42px); letter-spacing: -.045em; font-weight: 650; }
+    .intro { margin: 12px 0 26px; color: #60746c; line-height: 1.6; font-size: 15px; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+    fieldset { display: flex; padding: 4px; margin: 0; border: 1px solid #d7dfd4; border-radius: 12px; background: #e9eee4; }
+    legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .mode { position: relative; cursor: pointer; }
+    .mode input { position: absolute; inset: 0; opacity: 0; cursor: pointer; margin: 0; }
+    .mode span { display: block; padding: 10px 19px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+    .mode input:checked + span { color: #204f3e; background: #fff; box-shadow: 0 2px 5px #203b3610; }
+    .mode input:focus-visible + span, button:focus-visible { outline: 3px solid #718f5a; outline-offset: 4px; }
+    .count { color: #697a71; font-size: 13px; white-space: nowrap; }
+    .flashcard { width: 100%; min-height: 370px; padding: 26px 24px 28px; border: 1px solid #d6dfd2; border-radius: 22px; background: #fffefa; box-shadow: 0 12px 40px #243a2910; color: inherit; font: inherit; text-align: center; cursor: pointer; }
+    .flashcard:hover { border-color: #90a58b; }
+    .flashcard:active { background: #fafbf6; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #7a8a80; font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .badge { background: #edf2e6; color: #536b45; border-radius: 20px; padding: 6px 10px; letter-spacing: .06em; }
+    .number { display: block; margin-top: 16px; font-size: clamp(80px, 19vw, 112px); font-weight: 600; letter-spacing: -.05em; line-height: 1.25; font-variant-numeric: tabular-nums; }
+    .answer { display: flex; min-height: 126px; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 8px 0 4px; }
+    .sinhala { display: block; font-family: "Nirmala UI", "Iskoola Pota", "Noto Sans Sinhala", sans-serif; font-size: clamp(28px, 6vw, 38px); line-height: 1.7; }
+    .latin { display: block; font-size: 21px; color: #69805d; letter-spacing: .015em; line-height: 1.4; }
+    .prompt { font-size: 14px; font-weight: 600; color: #64776a; }
+    [hidden] { display: none !important; }
+    .advance { display: flex; justify-content: center; align-items: center; gap: 14px; width: 100%; margin-top: 18px; padding: 15px 18px; border: 0; border-radius: 12px; background: #285442; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+    .advance:hover { background: #1f4435; }
+    .arrow { font-size: 20px; font-weight: 400; }
+    .help { margin: 14px 0 28px; text-align: center; font-size: 13px; line-height: 1.7; color: #78847b; }
+    kbd { padding: 2px 6px; border: 1px solid #d5dbd0; border-radius: 4px; font: inherit; font-size: 12px; background: #fffefa; }
+    .details { border-top: 1px solid #dce3d6; padding-top: 18px; color: #738073; font-size: 12px; line-height: 1.8; }
+    .details p { margin: 0 0 6px; }
+    .details strong { font-weight: 600; color: #556a5b; }
+    a { color: #556f5a; text-underline-offset: 3px; }
+    @media (max-width: 440px) { body { padding: 28px 16px 20px; } .flashcard { padding: 22px 18px; min-height: 350px; } .mode span { padding: 10px 14px; } .toolbar { gap: 8px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">A little practice, every day</p>
+    <h1>Sinhala numbers</h1>
+    <p class="intro">Think of the word. Reveal the Sinhala, then the transliteration.<br>One more press takes you to the next number.</p>
+    <div class="toolbar">
+      <fieldset>
+        <legend>Practice order</legend>
+        <label class="mode"><input type="radio" name="mode" value="ordered" checked><span>Ordered</span></label>
+        <label class="mode"><input type="radio" name="mode" value="random"><span>Random</span></label>
+      </fieldset>
+      <span id="count" class="count"></span>
+    </div>
+    <button id="flashcard" class="flashcard" type="button" aria-describedby="keyboard-help">
+      <span class="card-header"><span>Recall &amp; reveal</span><span id="stage" class="badge">1 / 3</span></span>
+      <span id="card-content" aria-live="polite" aria-atomic="true">
+        <span id="number" class="number">0</span>
+        <span class="answer">
+          <span id="prompt" class="prompt">How do you say this in Sinhala?</span>
+          <span id="sinhala" class="sinhala" lang="si" hidden></span>
+          <span id="latin" class="latin" hidden></span>
+        </span>
+      </span>
+    </button>
+    <button id="advance" class="advance" type="button"><span id="action">Show Sinhala</span><span class="arrow" aria-hidden="true">→</span></button>
+    <p id="keyboard-help" class="help">Tap the card or button, or press <kbd>Space</kbd> / <kbd>Enter</kbd>.</p>
+    <footer class="details">
+      <p><strong>43 numbers:</strong> 0–25, 30, 40, 50, 60, 70, 80, 90, and 100–1000 in hundreds.</p>
+      <p>Ordered starts at zero and loops. Random shuffles all 43 cards before repeating.</p>
+      <p>Latin letters are a reading aid: doubled vowels (aa, ii, uu) are long; ae represents ඇ. Vocabulary checked against <a href="https://www.omniglot.com/language/numbers/sinhala.htm" target="_blank" rel="noopener noreferrer">Omniglot</a> and <a href="https://curry-hunter.jp/articles/sinhala-basics-numbers-chart/" target="_blank" rel="noopener noreferrer">Sinhala number lessons</a>.</p>
+    </footer>
+  </main>
+  <script>
+    "use strict";
+    // Common spoken counting forms. Romanization is consistent and uses plain Latin letters.
+    const cards = [
+      [0, "බිංදුව", "binduwa"],
+      [1, "එක", "eka"],
+      [2, "දෙක", "deka"],
+      [3, "තුන", "thuna"],
+      [4, "හතර", "hathara"],
+      [5, "පහ", "paha"],
+      [6, "හය", "haya"],
+      [7, "හත", "hatha"],
+      [8, "අට", "ata"],
+      [9, "නමය", "namaya"],
+      [10, "දහය", "dahaya"],
+      [11, "එකොළහ", "ekolaha"],
+      [12, "දොළහ", "dolaha"],
+      [13, "දහතුන", "dahathuna"],
+      [14, "දාහතර", "daahathara"],
+      [15, "පහළොව", "pahalowa"],
+      [16, "දාසය", "daasaya"],
+      [17, "දාහත", "daahatha"],
+      [18, "දහඅට", "daha ata"],
+      [19, "දහනමය", "dahanamaya"],
+      [20, "විස්ස", "wissa"],
+      [21, "විසි එක", "wisi eka"],
+      [22, "විසි දෙක", "wisi deka"],
+      [23, "විසි තුන", "wisi thuna"],
+      [24, "විසි හතර", "wisi hathara"],
+      [25, "විසි පහ", "wisi paha"],
+      [30, "තිහ", "thiha"],
+      [40, "හතළිහ", "hathaliha"],
+      [50, "පනහ", "panaha"],
+      [60, "හැට", "haeta"],
+      [70, "හැත්තෑව", "haeththaewa"],
+      [80, "අසූව", "asuuwa"],
+      [90, "අනූව", "anuuwa"],
+      [100, "සීය", "siiya"],
+      [200, "දෙසීය", "desiiya"],
+      [300, "තුන්සීය", "thunsiiya"],
+      [400, "හාරසීය", "haarasiiya"],
+      [500, "පන්සීය", "pansiiya"],
+      [600, "හයසීය", "hayasiiya"],
+      [700, "හත්සීය", "hathsiiya"],
+      [800, "අටසීය", "atasiiya"],
+      [900, "නමසීය", "namasiiya"],
+      [1000, "දාහ", "daaha"]
+    ];
+    const elements = Object.fromEntries(["flashcard", "number", "sinhala", "latin", "prompt", "stage", "count", "action", "advance"].map(id => [id, document.getElementById(id)]));
+    let mode = "ordered";
+    let sequence = cards.map((_, index) => index);
+    let position = 0;
+    let reveal = 0;
+
+    function shuffledSequence(previousIndex) {
+      const result = cards.map((_, index) => index);
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      // Avoid showing the same number across the boundary between shuffled rounds.
+      if (result[0] === previousIndex) [result[0], result[1]] = [result[1], result[0]];
+      return result;
+    }
+
+    function render() {
+      const [number, sinhala, latin] = cards[sequence[position]];
+      elements.number.textContent = String(number);
+      // Keep unrevealed answers out of the DOM and accessibility tree.
+      elements.sinhala.textContent = reveal >= 1 ? sinhala : "";
+      elements.latin.textContent = reveal >= 2 ? latin : "";
+      elements.sinhala.hidden = reveal < 1;
+      elements.latin.hidden = reveal < 2;
+      elements.prompt.hidden = reveal > 0;
+      elements.stage.textContent = `${reveal + 1} / 3`;
+      elements.count.textContent = `Card ${position + 1} of ${cards.length}`;
+      const action = ["Show Sinhala", "Show transliteration", "Next number"][reveal];
+      elements.action.textContent = action;
+      elements.flashcard.setAttribute("aria-label", `${number}${reveal >= 1 ? `, ${sinhala}` : ""}${reveal >= 2 ? `, ${latin}` : ""}. ${action}.`);
+    }
+
+    function advance() {
+      if (reveal < 2) {
+        reveal += 1;
+      } else {
+        const previousIndex = sequence[position];
+        position += 1;
+        if (position === sequence.length) {
+          position = 0;
+          if (mode === "random") sequence = shuffledSequence(previousIndex);
+        }
+        reveal = 0;
+      }
+      render();
+    }
+
+    elements.flashcard.addEventListener("click", advance);
+    elements.advance.addEventListener("click", advance);
+    document.querySelectorAll('input[name="mode"]').forEach(input => {
+      input.addEventListener("change", () => {
+        mode = input.value;
+        sequence = mode === "random" ? shuffledSequence(sequence[position]) : cards.map((_, index) => index);
+        position = 0;
+        reveal = 0;
+        render();
+      });
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key !== " " && event.key !== "Enter") return;
+      // Native controls handle their own keys, preventing double advances.
+      if (event.target.closest("button, input, select, textarea, a")) return;
+      event.preventDefault();
+      if (!event.repeat) advance();
+    });
+    render();
+  </script>
+</body>
+</html>

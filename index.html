@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Choose Sinhala number or alphabet flash cards, with ordered and random practice.">
+  <title>Sinhala Flash Cards</title>
+  <style>
+    :root { color-scheme: light; font-family: "Segoe UI", Arial, sans-serif; color: #203b36; background: #f4f5ef; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; padding: 56px 20px 28px; }
+    main { max-width: 680px; margin: auto; }
+    .eyebrow { margin: 0 0 10px; color: #627c66; font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(32px, 7vw, 44px); font-weight: 650; letter-spacing: -.045em; }
+    .intro { margin: 12px 0 28px; color: #60746c; font-size: 16px; line-height: 1.7; }
+    .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .choice { display: flex; flex-direction: column; padding: 26px; border: 1px solid #d6dfd2; border-radius: 20px; background: #fffefa; color: inherit; text-decoration: none; box-shadow: 0 12px 40px #243a2910; }
+    .choice:hover { border-color: #90a58b; background: #fafbf6; }
+    .choice:focus-visible { outline: 3px solid #718f5a; outline-offset: 5px; }
+    .preview { display: flex; align-items: center; min-height: 116px; margin-bottom: 16px; color: #285442; font-size: 64px; font-weight: 500; line-height: 1.6; letter-spacing: -.04em; }
+    .sinhala { font-family: "Nirmala UI", "Iskoola Pota", "Noto Sans Sinhala", sans-serif; font-size: 74px; font-weight: 400; letter-spacing: 0; }
+    h2 { margin: 0 0 10px; font-size: 24px; font-weight: 600; letter-spacing: -.025em; }
+    .description { flex: 1; margin: 0 0 24px; color: #60746c; font-size: 14px; line-height: 1.8; }
+    .start { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 16px; border-radius: 10px; background: #285442; color: #fff; font-size: 14px; font-weight: 600; }
+    .arrow { font-size: 20px; font-weight: 400; }
+    .help { margin: 24px 0 0; text-align: center; color: #738073; font-size: 13px; line-height: 1.8; }
+    @media (max-width: 520px) {
+      body { padding: 32px 16px 24px; }
+      .choices { grid-template-columns: 1fr; gap: 16px; }
+      .choice { padding: 22px; }
+      .preview { min-height: 76px; margin-bottom: 12px; font-size: 48px; }
+      .sinhala { font-size: 56px; }
+      .description { margin-bottom: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">A little practice, every day</p>
+    <h1>Sinhala flash cards</h1>
+    <p class="intro">Choose what you’d like to practice.<br>Learn at your own pace, one card at a time.</p>
+    <nav class="choices" aria-label="Choose a flash-card program">
+      <a class="choice" href="sinhala-numbers.html" aria-labelledby="numbers-title" aria-describedby="numbers-description">
+        <span class="preview" aria-hidden="true">123</span>
+        <h2 id="numbers-title">Numbers</h2>
+        <p id="numbers-description" class="description">43 numbers, from zero to a thousand.<br>Reveal the Sinhala word, then its Latin transliteration.</p>
+        <span class="start">Practice numbers <span class="arrow" aria-hidden="true">→</span></span>
+      </a>
+      <a class="choice" href="sinhala-letters.html" aria-labelledby="letters-title" aria-describedby="letters-description">
+        <span class="preview sinhala" lang="si" aria-hidden="true">අ ආ</span>
+        <h2 id="letters-title">Letters</h2>
+        <p id="letters-description" class="description">62 cards covering the alphabet and signs.<br>Reveal each letter’s name, then its Latin reading.</p>
+        <span class="start">Practice letters <span class="arrow" aria-hidden="true">→</span></span>
+      </a>
+    </nav>
+    <p class="help">Both programs offer ordered and random practice.<br>Tap to reveal, then tap again to keep learning.</p>
+  </main>
+</body>
+</html>

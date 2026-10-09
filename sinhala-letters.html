@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Practice the complete Sinhala alphabet with gradual reveals, in order or at random.">
+  <title>Sinhala Letters · Flash Cards</title>
+  <style>
+    :root { font-family: "Segoe UI", Arial, sans-serif; color: #203b36; background: #f4f5ef; color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 44px 20px 28px; min-height: 100vh; }
+    main { max-width: 620px; margin: auto; }
+    .eyebrow { margin: 0 0 10px; color: #627c66; font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(30px, 7vw, 42px); letter-spacing: -.045em; font-weight: 650; }
+    .intro { margin: 12px 0 26px; color: #60746c; line-height: 1.6; font-size: 15px; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+    fieldset { display: flex; padding: 4px; margin: 0; border: 1px solid #d7dfd4; border-radius: 12px; background: #e9eee4; }
+    legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .mode { position: relative; cursor: pointer; }
+    .mode input { position: absolute; inset: 0; opacity: 0; cursor: pointer; margin: 0; }
+    .mode span { display: block; padding: 10px 19px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+    .mode input:checked + span { color: #204f3e; background: #fff; box-shadow: 0 2px 5px #203b3610; }
+    .mode input:focus-visible + span, button:focus-visible { outline: 3px solid #718f5a; outline-offset: 4px; }
+    .count { color: #697a71; font-size: 13px; white-space: nowrap; }
+    .flashcard { width: 100%; min-height: 370px; padding: 26px 24px 28px; border: 1px solid #d6dfd2; border-radius: 22px; background: #fffefa; box-shadow: 0 12px 40px #243a2910; color: inherit; font: inherit; text-align: center; cursor: pointer; }
+    .flashcard:hover { border-color: #90a58b; }
+    .flashcard:active { background: #fafbf6; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #7a8a80; font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .badge { background: #edf2e6; color: #536b45; border-radius: 20px; padding: 6px 10px; letter-spacing: .06em; }
+    .letter { display: block; margin-top: 16px; font-size: clamp(80px, 19vw, 112px); font-weight: 600; letter-spacing: -.05em; line-height: 1.25; font-family: "Nirmala UI", "Iskoola Pota", "Noto Sans Sinhala", sans-serif; font-weight: 400; line-height: 1.6; letter-spacing: 0; }
+    .answer { display: flex; min-height: 174px; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 8px 0 4px; }
+    .sinhala { display: block; font-family: "Nirmala UI", "Iskoola Pota", "Noto Sans Sinhala", sans-serif; font-size: clamp(22px, 4.8vw, 28px); line-height: 1.7; }
+    .latin { display: block; font-size: 21px; color: #69805d; letter-spacing: .015em; line-height: 1.4; }
+    .prompt { font-size: 14px; font-weight: 600; color: #64776a; }
+    [hidden] { display: none !important; }
+    .advance { display: flex; justify-content: center; align-items: center; gap: 14px; width: 100%; margin-top: 18px; padding: 15px 18px; border: 0; border-radius: 12px; background: #285442; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+    .advance:hover { background: #1f4435; }
+    .arrow { font-size: 20px; font-weight: 400; }
+    .help { margin: 14px 0 28px; text-align: center; font-size: 13px; line-height: 1.7; color: #78847b; }
+    kbd { padding: 2px 6px; border: 1px solid #d5dbd0; border-radius: 4px; font: inherit; font-size: 12px; background: #fffefa; }
+    .details { border-top: 1px solid #dce3d6; padding-top: 18px; color: #738073; font-size: 12px; line-height: 1.8; }
+    .details p { margin: 0 0 6px; }
+    .details strong { font-weight: 600; color: #556a5b; }
+    a { color: #556f5a; text-underline-offset: 3px; }
+    @media (max-width: 440px) { body { padding: 28px 16px 20px; } .flashcard { padding: 22px 18px; min-height: 350px; } .mode span { padding: 10px 14px; } .toolbar { gap: 8px; } }
+  
+    .sound { display: block; font-size: 28px; color: #285442; line-height: 1.5; }
+    .latin { font-size: 15px; }
+    .note { font-size: 12px; color: #78847b; line-height: 1.6; max-width: 430px; }
+    .flashcard { min-height: 430px; }
+    .answer { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">A little practice, every day</p>
+    <h1>Sinhala letters</h1>
+    <p class="intro">Recognize the letter. Reveal its name, then its Latin reading.<br>One more press takes you to the next letter.</p>
+    <div class="toolbar">
+      <fieldset>
+        <legend>Practice order</legend>
+        <label class="mode"><input type="radio" name="mode" value="ordered" checked><span>Ordered</span></label>
+        <label class="mode"><input type="radio" name="mode" value="random"><span>Random</span></label>
+      </fieldset>
+      <span id="count" class="count"></span>
+    </div>
+    <button id="flashcard" class="flashcard" type="button" aria-describedby="keyboard-help">
+      <span class="card-header"><span id="group">Vowel</span><span id="stage" class="badge">1 / 3</span></span>
+      <span id="card-content" aria-live="polite" aria-atomic="true">
+        <span id="letter" class="letter" lang="si">අ</span>
+        <span class="answer">
+          <span id="prompt" class="prompt">Do you recognize this letter?</span>
+          <span id="sinhala" class="sinhala" lang="si" hidden></span>
+          <span id="sound" class="sound" hidden></span>
+          <span id="latin" class="latin" hidden></span>
+          <span id="note" class="note" hidden></span>
+        </span>
+      </span>
+    </button>
+    <button id="advance" class="advance" type="button"><span id="action">Show letter name</span><span class="arrow" aria-hidden="true">→</span></button>
+    <p id="keyboard-help" class="help">Tap the card or button, or press <kbd>Space</kbd> / <kbd>Enter</kbd>.</p>
+    <footer class="details">
+      <p><strong>62 cards:</strong> 18 vowels, 41 consonants, the signs ං and ඃ, and the combination ක්ෂ. Rare letters are included.</p>
+      <p>Ordered starts with අ and loops. Random shuffles the full set before repeating.</p>
+      <p>The large Latin text is the letter’s reading; the smaller line gives its name. Consonants include the inherent vowel a. ā, ǣ, ī, ū, ē, ō are long vowels; æ is like a in “cat”; c is like ch in “chair”.</p>
+      <p>Dots distinguish retroflex sounds (ṭ, ḍ, ṇ, ḷ); ṛ / ṝ and ḷ / ḹ on vowel cards are vocalic r / l. A breve marks prenasalization (n̆g, n̆d, m̆b). kh, gh, ch, jh, ṭh, ḍh, th, dh, ph and bh denote aspiration; modern readings may coincide. ś and ṣ are sh sounds; v is often pronounced like w.</p>
+      <p>Alphabet checked against <a href="https://www.unicode.org/L2/L2004/04131-sls1134.pdf" target="_blank" rel="noopener noreferrer">SLS 1134</a>. Combining vowel marks (පිල්ලම්) are separate from the independent alphabet letters.</p>
+    </footer>
+  </main>
+  <script>
+    "use strict";
+    // All 18 independent vowels, 41 consonants, two signs, and the ksha conjunct.
+    const cards = [
+  {
+    "letter": "අ",
+    "name": "අයන්න",
+    "latin": "ayanna",
+    "sound": "a",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ආ",
+    "name": "ආයන්න",
+    "latin": "aayanna",
+    "sound": "ā",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ඇ",
+    "name": "ඇයන්න",
+    "latin": "aeyanna",
+    "sound": "æ",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ඈ",
+    "name": "ඈයන්න",
+    "latin": "aeeyanna",
+    "sound": "ǣ",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ඉ",
+    "name": "ඉයන්න",
+    "latin": "iyanna",
+    "sound": "i",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ඊ",
+    "name": "ඊයන්න",
+    "latin": "iiyanna",
+    "sound": "ī",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "උ",
+    "name": "උයන්න",
+    "latin": "uyanna",
+    "sound": "u",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ඌ",
+    "name": "ඌයන්න",
+    "latin": "uuyanna",
+    "sound": "ū",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ඍ",
+    "name": "ඉරුයන්න",
+    "latin": "iruyanna",
+    "sound": "ṛ",
+    "group": "Vowel",
+    "note": "Vocalic r; often read as “ru” in Sinhala."
+  },
+  {
+    "letter": "ඎ",
+    "name": "ඉරූයන්න",
+    "latin": "iruuyanna",
+    "sound": "ṝ",
+    "group": "Vowel",
+    "note": "Rare historical vowel; included for completeness."
+  },
+  {
+    "letter": "ඏ",
+    "name": "ඉලුයන්න",
+    "latin": "iluyanna",
+    "sound": "ḷ",
+    "group": "Vowel",
+    "note": "Rare historical vowel; included for completeness."
+  },
+  {
+    "letter": "ඐ",
+    "name": "ඉලූයන්න",
+    "latin": "iluuyanna",
+    "sound": "ḹ",
+    "group": "Vowel",
+    "note": "Rare historical vowel; included for completeness."
+  },
+  {
+    "letter": "එ",
+    "name": "එයන්න",
+    "latin": "eyanna",
+    "sound": "e",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ඒ",
+    "name": "ඒයන්න",
+    "latin": "eeyanna",
+    "sound": "ē",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ඓ",
+    "name": "ඓයන්න",
+    "latin": "aiyanna",
+    "sound": "ai",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ඔ",
+    "name": "ඔයන්න",
+    "latin": "oyanna",
+    "sound": "o",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ඕ",
+    "name": "ඕයන්න",
+    "latin": "ooyanna",
+    "sound": "ō",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ඖ",
+    "name": "ඖයන්න",
+    "latin": "auyanna",
+    "sound": "au",
+    "group": "Vowel",
+    "note": ""
+  },
+  {
+    "letter": "ක",
+    "name": "අල්පප්‍රාණ කයන්න",
+    "latin": "alpapraana kayanna",
+    "sound": "ka",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඛ",
+    "name": "මහාප්‍රාණ කයන්න",
+    "latin": "mahaapraana kayanna",
+    "sound": "kha",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ග",
+    "name": "අල්පප්‍රාණ ගයන්න",
+    "latin": "alpapraana gayanna",
+    "sound": "ga",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඝ",
+    "name": "මහාප්‍රාණ ගයන්න",
+    "latin": "mahaapraana gayanna",
+    "sound": "gha",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඞ",
+    "name": "කණ්ඨජ නාසික්‍යය",
+    "latin": "kanthaja naasikyaya",
+    "sound": "ṅa",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඟ",
+    "name": "සඤ්ඤක ගයන්න",
+    "latin": "sanyaka gayanna",
+    "sound": "n̆ga",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ච",
+    "name": "අල්පප්‍රාණ චයන්න",
+    "latin": "alpapraana chayanna",
+    "sound": "ca",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඡ",
+    "name": "මහාප්‍රාණ චයන්න",
+    "latin": "mahaapraana chayanna",
+    "sound": "cha",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ජ",
+    "name": "අල්පප්‍රාණ ජයන්න",
+    "latin": "alpapraana jayanna",
+    "sound": "ja",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඣ",
+    "name": "මහාප්‍රාණ ජයන්න",
+    "latin": "mahaapraana jayanna",
+    "sound": "jha",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඤ",
+    "name": "තාලුජ නාසික්‍යය",
+    "latin": "thaaluja naasikyaya",
+    "sound": "ña",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඥ",
+    "name": "තාලුජ සංයෝග නාසික්‍යය",
+    "latin": "thaaluja sanyoga naasikyaya",
+    "sound": "jña",
+    "group": "Consonant",
+    "note": "Often read as “nya” initially; its reading depends on the word."
+  },
+  {
+    "letter": "ඦ",
+    "name": "සඤ්ඤක ජයන්න",
+    "latin": "sanyaka jayanna",
+    "sound": "n̆ja",
+    "group": "Consonant",
+    "note": "Rare prenasalized letter; included for completeness."
+  },
+  {
+    "letter": "ට",
+    "name": "අල්පප්‍රාණ ටයන්න",
+    "latin": "alpapraana tayanna",
+    "sound": "ṭa",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඨ",
+    "name": "මහාප්‍රාණ ටයන්න",
+    "latin": "mahaapraana tayanna",
+    "sound": "ṭha",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඩ",
+    "name": "අල්පප්‍රාණ ඩයන්න",
+    "latin": "alpapraana dayanna",
+    "sound": "ḍa",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඪ",
+    "name": "මහාප්‍රාණ ඩයන්න",
+    "latin": "mahaapraana dayanna",
+    "sound": "ḍha",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ණ",
+    "name": "මූර්ධජ නයන්න",
+    "latin": "muurdhaja nayanna",
+    "sound": "ṇa",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඬ",
+    "name": "සඤ්ඤක ඩයන්න",
+    "latin": "sanyaka dayanna",
+    "sound": "n̆ḍa",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ත",
+    "name": "අල්පප්‍රාණ තයන්න",
+    "latin": "alpapraana thayanna",
+    "sound": "ta",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ථ",
+    "name": "මහාප්‍රාණ තයන්න",
+    "latin": "mahaapraana thayanna",
+    "sound": "tha",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ද",
+    "name": "අල්පප්‍රාණ දයන්න",
+    "latin": "alpapraana dhayanna",
+    "sound": "da",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ධ",
+    "name": "මහාප්‍රාණ දයන්න",
+    "latin": "mahaapraana dhayanna",
+    "sound": "dha",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "න",
+    "name": "දන්තජ නයන්න",
+    "latin": "danthaja nayanna",
+    "sound": "na",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඳ",
+    "name": "සඤ්ඤක දයන්න",
+    "latin": "sanyaka dhayanna",
+    "sound": "n̆da",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ප",
+    "name": "අල්පප්‍රාණ පයන්න",
+    "latin": "alpapraana payanna",
+    "sound": "pa",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඵ",
+    "name": "මහාප්‍රාණ පයන්න",
+    "latin": "mahaapraana payanna",
+    "sound": "pha",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "බ",
+    "name": "අල්පප්‍රාණ බයන්න",
+    "latin": "alpapraana bayanna",
+    "sound": "ba",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "භ",
+    "name": "මහාප්‍රාණ බයන්න",
+    "latin": "mahaapraana bayanna",
+    "sound": "bha",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ම",
+    "name": "මයන්න",
+    "latin": "mayanna",
+    "sound": "ma",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ඹ",
+    "name": "අඹ බයන්න",
+    "latin": "amba bayanna",
+    "sound": "m̆ba",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ය",
+    "name": "යයන්න",
+    "latin": "yayanna",
+    "sound": "ya",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ර",
+    "name": "රයන්න",
+    "latin": "rayanna",
+    "sound": "ra",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ල",
+    "name": "දන්තජ ලයන්න",
+    "latin": "danthaja layanna",
+    "sound": "la",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ව",
+    "name": "වයන්න",
+    "latin": "wayanna",
+    "sound": "va",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ශ",
+    "name": "තාලුජ සයන්න",
+    "latin": "thaaluja sayanna",
+    "sound": "śa",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ෂ",
+    "name": "මූර්ධජ සයන්න",
+    "latin": "muurdhaja sayanna",
+    "sound": "ṣa",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ස",
+    "name": "දන්තජ සයන්න",
+    "latin": "danthaja sayanna",
+    "sound": "sa",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "හ",
+    "name": "හයන්න",
+    "latin": "hayanna",
+    "sound": "ha",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ළ",
+    "name": "මූර්ධජ ලයන්න",
+    "latin": "muurdhaja layanna",
+    "sound": "ḷa",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ෆ",
+    "name": "ෆයන්න",
+    "latin": "fayanna",
+    "sound": "fa",
+    "group": "Consonant",
+    "note": ""
+  },
+  {
+    "letter": "ං",
+    "name": "අනුස්වාරය",
+    "latin": "anuswaaraya",
+    "sound": "ṃ",
+    "group": "Sign",
+    "note": "Anusvara (binduwa): marks a nasal sound after a vowel."
+  },
+  {
+    "letter": "ඃ",
+    "name": "විසර්ගය",
+    "latin": "visargaya",
+    "sound": "ḥ",
+    "group": "Sign",
+    "note": "Visarga: a breath sound following a vowel, mainly in Sanskrit words."
+  },
+  {
+    "letter": "ක්‍ෂ",
+    "name": "ක්ෂයන්න",
+    "latin": "kshayanna",
+    "sound": "kṣa",
+    "group": "Conjunct",
+    "note": "A combination of ක + ් + ෂ, often taught with the alphabet."
+  }
+];
+    const elements = Object.fromEntries(["flashcard", "letter", "sinhala", "latin", "sound", "note", "group", "prompt", "stage", "count", "action", "advance"].map(id => [id, document.getElementById(id)]));
+    let mode = "ordered";
+    let sequence = cards.map((_, index) => index);
+    let position = 0;
+    let reveal = 0;
+
+    function shuffledSequence(previousIndex) {
+      const result = cards.map((_, index) => index);
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      // Avoid showing the same letter across the boundary between shuffled rounds.
+      if (result[0] === previousIndex) [result[0], result[1]] = [result[1], result[0]];
+      return result;
+    }
+
+    function render() {
+      const { letter, name, latin, sound, group, note } = cards[sequence[position]];
+      elements.letter.textContent = letter;
+      elements.group.textContent = group;
+      // Keep unrevealed answers out of the DOM and accessibility tree.
+      elements.sinhala.textContent = reveal >= 1 ? name : "";
+      elements.latin.textContent = reveal >= 2 ? latin : "";
+      elements.sinhala.hidden = reveal < 1;
+      elements.latin.hidden = reveal < 2;
+      elements.sound.hidden = reveal < 2;
+      elements.sound.textContent = reveal >= 2 ? sound : "";
+      elements.note.hidden = reveal < 2 || !note;
+      elements.note.textContent = reveal >= 2 ? note : "";
+      elements.prompt.hidden = reveal > 0;
+      elements.stage.textContent = `${reveal + 1} / 3`;
+      elements.count.textContent = `Card ${position + 1} of ${cards.length}`;
+      const action = ["Show letter name", "Show Latin reading", "Next letter"][reveal];
+      elements.action.textContent = action;
+      elements.flashcard.setAttribute("aria-label", `${letter}${reveal >= 1 ? `, ${name}` : ""}${reveal >= 2 ? `, ${sound}, ${latin}${note ? `, ${note}` : ""}` : ""}. ${action}.`);
+    }
+
+    function advance() {
+      if (reveal < 2) {
+        reveal += 1;
+      } else {
+        const previousIndex = sequence[position];
+        position += 1;
+        if (position === sequence.length) {
+          position = 0;
+          if (mode === "random") sequence = shuffledSequence(previousIndex);
+        }
+        reveal = 0;
+      }
+      render();
+    }
+
+    elements.flashcard.addEventListener("click", advance);
+    elements.advance.addEventListener("click", advance);
+    document.querySelectorAll('input[name="mode"]').forEach(input => {
+      input.addEventListener("change", () => {
+        mode = input.value;
+        sequence = mode === "random" ? shuffledSequence(sequence[position]) : cards.map((_, index) => index);
+        position = 0;
+        reveal = 0;
+        render();
+      });
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key !== " " && event.key !== "Enter") return;
+      // Native controls handle their own keys, preventing double advances.
+      if (event.target.closest("button, input, select, textarea, a")) return;
+      event.preventDefault();
+      if (!event.repeat) advance();
+    });
+    render();
+    </script>
+</body>
+</html>
